@@ -2,6 +2,9 @@ import random
 import pygame
 import time
 import numpy
+from pydub import AudioSegment
+from pydub.playback import play
+import time  # Don't forget to import the time module
 
 def generate_random_notes(num_notes):
     # Define the possible musical notes
@@ -12,7 +15,7 @@ def generate_random_notes(num_notes):
 
     return random_notes
 
-def play_music_notes(notes):
+def play_music_notes_sine(notes):
     # Dictionary mapping notes to corresponding frequencies (adjust as needed)
     note_frequencies = {
         'C': 261.63,
@@ -54,6 +57,51 @@ def play_music_notes(notes):
     # Allow the sounds to play for the specified duration
     time.sleep(note_duration / 1000.0)
 
+def play_music_notes_piano_sample(notes):
+    note_frequencies = {
+        'C': 261.63,
+        'C#': 277.18,
+        'D': 293.66,
+        'D#': 311.13,
+        'E': 329.63,
+        'F': 349.23,
+        'F#': 369.99,
+        'G': 392.00,
+        'G#': 415.30,
+        'A': 440.00,
+        'A#': 466.16,
+        'B': 493.88
+    }
+
+    note_duration = 500
+
+    # Load the sample.wav file
+    sample = AudioSegment.from_wav("grandpiano.wav")
+
+    # Choose a common sample rate (e.g., 44100)
+    common_sample_rate = 44100
+    sample = sample.set_frame_rate(common_sample_rate)
+
+    # Play the notes
+    for note, octave in notes:
+        frequency = note_frequencies.get(note, octave) * (2 ** (octave - 4))
+        if frequency == 0:
+            print(f"Invalid note: {note}")
+            return
+
+        # Calculate the ratio for pitch shifting
+        ratio = 2 ** ((frequency - 440) / 440)  # Adjust as needed
+
+        # Apply pitch shifting to the sample
+        shifted_sample = sample._spawn(sample.raw_data, overrides={
+            "frame_rate": int(sample.frame_rate * ratio)
+        })
+
+        # Play the modified sample
+        play(shifted_sample)
+        time.sleep(note_duration / 1000.0)
+
+        
 def freq_array_sine_envelope(frequency, length_ms):
     sample_rate = 44100  # Adjust as needed
     length = int(sample_rate * length_ms / 1000)
@@ -71,7 +119,8 @@ def freq_array_sine_envelope(frequency, length_ms):
     return (waveform * 32767).astype(numpy.int16)
 
 # Example usage
-num_notes = 2
-random_notes = generate_random_notes(num_notes)
-print(f"Random Music Notes: {random_notes}")
-play_music_notes(random_notes)
+for i in range(0,10):
+    num_notes = 1
+    random_notes = generate_random_notes(num_notes)
+    print(f"Random Music Notes: {random_notes}")
+    play_music_notes_piano_sample(random_notes)
