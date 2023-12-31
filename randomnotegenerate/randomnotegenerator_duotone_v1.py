@@ -12,11 +12,11 @@ def generate_random_notes(num_notes):
     notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
     # Generate a list of random notes and octaves
-    random_notes = [(random.choice(notes), random.randint(3, 5)) for _ in range(num_notes)]
+    random_notes = [(random.choice(notes), random.randint(2, 4)) for _ in range(num_notes)]
 
     return random_notes
 
-def play_music_notes_sine(notes, duration, waveform_type):
+def play_music_notes(notes, duration, waveform_type):
     # Dictionary mapping notes to corresponding frequencies (adjust as needed)
     note_frequencies = {
         'C': 261.63,
@@ -168,4 +168,4 @@ for i in range(0,2):
     num_notes = 1
     random_notes = generate_random_notes(num_notes)
     print(f"Random Music Notes: {random_notes}")
-    play_music_notes_sine(random_notes,500,'sine-square')
+    play_music_notes(result,500,'sine-square')
