@@ -12,7 +12,7 @@ def generate_random_notes(num_notes):
     notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
     # Generate a list of random notes and octaves
-    random_notes = [(random.choice(notes), random.randint(2, 4)) for _ in range(num_notes)]
+    random_notes = [(random.choice(notes), random.randint(2, 3)) for _ in range(num_notes)]
 
     return random_notes
 
@@ -162,10 +162,52 @@ def freq_array_sawtooth_envelope(frequency, length_ms):
 
     return (waveform * 32767).astype(numpy.int16)
 
+def get_chord_notes(note, octave, chord_type):
+    # Define the possible musical notes
+    notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+
+    # Map note names to indices
+    note_index = notes.index(note)
+
+    # Calculate the starting note's index in the chromatic scale
+    start_index = note_index + (octave - 1) * len(notes)
+
+    # Define intervals for each chord type
+    chord_intervals = {
+        'maj': [0, 4, 7],
+        'minor': [0, 3, 7],
+        'aug': [0, 4, 8],
+        'dim': [0, 3, 6],
+        'halfdim': [0, 3, 6, 10],
+        'maj7': [0, 4, 7, 11],
+        'min7': [0, 3, 7, 10],
+        'dom7': [0, 4, 7, 10],
+        'majmin7': [0, 4, 7, 10],
+        'maj6': [0, 4, 7, 9],
+        'min6': [0, 3, 7, 9],
+        'maj9': [0, 4, 7, 11, 14],
+        'min9': [0, 3, 7, 10, 14],
+        'dom9': [0, 4, 7, 10, 14],
+        'dom13': [0, 4, 7, 10, 14, 21],
+        '7b9': [0, 4, 7, 10, 13]
+    }
+
+    # Calculate the notes in the chord
+    chord_notes = [(notes[(start_index + interval) % len(notes)], octave + (start_index + interval) // len(notes))
+                   for interval in chord_intervals.get(chord_type, [])]
+
+    return chord_notes
 
 # Example usage
-for i in range(0,2):
+for i in range(0,1):
+    #define a tempo
+    bpm=85
     num_notes = 1
     random_notes = generate_random_notes(num_notes)
+    minninechord = get_chord_notes(random_notes[0][0], random_notes[0][1], 'dom9')
     print(f"Random Music Notes: {random_notes}")
-    play_music_notes(result,500,'sine-square')
+    play_music_notes(minninechord,10000,'square')
+    play_music_notes([minninechord[0]],300,'square')
+    play_music_notes([minninechord[1]],300,'square')
+    play_music_notes([minninechord[2]],300,'square')
+    play_music_notes([minninechord[3]],300,'square')
