@@ -120,6 +120,8 @@ num_notes = 1
 random_notes = [(random.choice(['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']), random.randint(2, 3))
                 for _ in range(num_notes)]
 
+
+
 minninechord = get_chord_notes(random_notes[0][0], random_notes[0][1], 'dom9')
 print(f"Random Music Notes: {random_notes}")
 play_fm_synth_chord(random_notes, 500)
